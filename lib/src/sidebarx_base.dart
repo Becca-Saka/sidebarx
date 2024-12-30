@@ -22,10 +22,6 @@ class SidebarX extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 300),
     this.collapseIcon = Icons.arrow_back_ios_new,
     this.extendIcon = Icons.arrow_forward_ios,
-    this.alwaysExpanded = false,
-    this.showTrailingIcon = true,
-    this.shape,
-    this.childrenPadding,
   }) : super(key: key);
 
   /// Default theme of Sidebar
@@ -71,10 +67,6 @@ class SidebarX extends StatefulWidget {
 
   /// Extend Icon
   final IconData extendIcon;
-  final bool alwaysExpanded;
-  final bool showTrailingIcon;
-  final ShapeBorder? shape;
-  final EdgeInsets? childrenPadding;
   @override
   State<SidebarX> createState() => _SidebarXState();
 }
@@ -142,11 +134,11 @@ class _SidebarXState extends State<SidebarX>
                       return ExpandedSidebarXCell(
                         item: item,
                         theme: t,
-                        shape: widget.shape,
-                        showTrailingIcon: widget.showTrailingIcon,
-                        alwaysExpanded: widget.alwaysExpanded,
+                        shape: item.shape,
+                        showTrailingIcon: item.showTrailingIcon,
+                        alwaysExpanded: item.alwaysExpanded,
                         onTitleTap: item.onTap,
-                        childrenPadding: widget.childrenPadding,
+                        childrenPadding: item.childrenPadding,
                         animationController: _animationController!,
                         extended: widget.controller.extended,
                         selected: widget.controller.selectedIndex == index,

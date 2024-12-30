@@ -16,6 +16,10 @@ class SidebarXItem {
     this.onSecondaryTap,
     this.selectable = true,
     this.children,
+    this.alwaysExpanded = false,
+    this.showTrailingIcon = true,
+    this.shape,
+    this.childrenPadding,
   }) : assert(
           (icon != null || iconBuilder != null || iconWidget != null),
           'You can create SidebarXItem with IconData? icon or with Widget? iconWidget',
@@ -30,8 +34,12 @@ class SidebarXItem {
   final Function()? onLongPress;
   final Function()? onSecondaryTap;
 
-  final List<SidebarXItem>? children;
-
   /// The `itemBuilder` callback used for setup custom icon for [SidebarXItem]
   final SidebarXItemBuilder? iconBuilder;
+
+  final bool alwaysExpanded;
+  final bool showTrailingIcon;
+  final ShapeBorder? shape;
+  final EdgeInsets? childrenPadding;
+  final List<SidebarXItem>? children;
 }
