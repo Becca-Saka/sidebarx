@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'package:sidebarx/src/widgets/widgets.dart';
 
+import 'widgets/expandable_sidebarx_cell.dart';
+
 class SidebarX extends StatefulWidget {
   const SidebarX({
     Key? key,
@@ -20,6 +22,10 @@ class SidebarX extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 300),
     this.collapseIcon = Icons.arrow_back_ios_new,
     this.extendIcon = Icons.arrow_forward_ios,
+    this.alwaysExpanded = false,
+    this.showTrailingIcon = true,
+    this.shape,
+    this.childrenPadding,
   }) : super(key: key);
 
   /// Default theme of Sidebar
@@ -65,7 +71,10 @@ class SidebarX extends StatefulWidget {
 
   /// Extend Icon
   final IconData extendIcon;
-
+  final bool alwaysExpanded;
+  final bool showTrailingIcon;
+  final ShapeBorder? shape;
+  final EdgeInsets? childrenPadding;
   @override
   State<SidebarX> createState() => _SidebarXState();
 }
@@ -129,6 +138,75 @@ class _SidebarXState extends State<SidebarX>
                       (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final item = widget.items[index];
+                    if (item.children != null) {
+                      return ExpandedSidebarXCell(
+                        item: item,
+                        theme: t,
+                        shape: widget.shape,
+                        showTrailingIcon: widget.showTrailingIcon,
+                        alwaysExpanded: widget.alwaysExpanded,
+                        onTitleTap: item.onTap,
+                        childrenPadding: widget.childrenPadding,
+                        animationController: _animationController!,
+                        extended: widget.controller.extended,
+                        selected: widget.controller.selectedIndex == index,
+                        panelExpanded: widget.controller.panelExpaned &&
+                            widget.controller.selectedIndex == index,
+                        itemSelected: (itemIndex) =>
+                            widget.controller.selectedIndex == index &&
+                            widget.controller.selectedPanelIndex == itemIndex,
+                        onExpanded: () => _onExpansionSelected(item, index),
+                        onItemTap: (itemIndex, e) =>
+                            _onExpansionItemSelected(e, index, itemIndex),
+                        onLongPress: () =>
+                            _onItemLongPressSelected(item, index),
+                        onSecondaryTap: () =>
+                            _onItemSecondaryTapSelected(item, index),
+                      );
+                      // return ExpansionTile(
+                      //   // key: UniqueKey(),
+                      //   showTrailingIcon: false,
+                      //   tilePadding: EdgeInsets.zero,
+                      //   childrenPadding: EdgeInsets.zero,
+                      //   onExpansionChanged: (value) {
+                      //     _onExpansionSelected(item, index);
+                      //   },
+                      //   initiallyExpanded: widget.controller.panelExpaned &&
+                      //       widget.controller.selectedIndex == index,
+                      //   title: SidebarXCell(
+                      //     item: item,
+                      //     theme: t,
+                      //     panelExpanded: widget.controller.panelExpaned &&
+                      //         widget.controller.selectedIndex == index,
+                      //     animationController: _animationController!,
+                      //     extended: widget.controller.extended,
+                      //     selected: widget.controller.selectedIndex == index,
+                      //     onLongPress: () =>
+                      //         _onItemLongPressSelected(item, index),
+                      //     onSecondaryTap: () =>
+                      //         _onItemSecondaryTapSelected(item, index),
+                      //   ),
+                      //   children: item.children!.map((e) {
+                      //     final itemIndex = item.children!.indexOf(e);
+                      //     return SidebarXCell(
+                      //       item: e,
+                      //       theme: t,
+                      //       animationController: _animationController!,
+                      //       extended: widget.controller.extended,
+                      //       selected:
+                      //           widget.controller.selectedIndex == index &&
+                      //               widget.controller.selectedPanelIndex ==
+                      //                   itemIndex,
+                      //       onTap: () =>
+                      //           _onExpansionItemSelected(e, index, itemIndex),
+                      //       onLongPress: () =>
+                      //           _onItemLongPressSelected(e, index),
+                      //       onSecondaryTap: () =>
+                      //           _onItemSecondaryTapSelected(e, index),
+                      //     );
+                      //   }).toList(),
+                      // );
+                    }
                     return SidebarXCell(
                       item: item,
                       theme: t,
@@ -203,6 +281,20 @@ class _SidebarXState extends State<SidebarX>
     item.onTap?.call();
     if (item.selectable) {
       widget.controller.selectIndex(index);
+    }
+  }
+
+  void _onExpansionItemSelected(SidebarXItem item, int parentIndex, int index) {
+    item.onTap?.call();
+    if (item.selectable) {
+      widget.controller.setExpandedPanel(index, parentIndex);
+    }
+  }
+
+  void _onExpansionSelected(SidebarXItem item, int parentIndex) {
+    item.onTap?.call();
+    if (item.selectable) {
+      widget.controller.setCollapsedPanel(parentIndex);
     }
   }
 

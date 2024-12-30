@@ -148,6 +148,29 @@ class ExampleSidebarX extends StatelessWidget {
             debugPrint('Home');
           },
         ),
+        SidebarXItem(
+          icon: Icons.home,
+          label: 'Expansion Test',
+          onTap: () {
+            debugPrint('Home yayy');
+          },
+          children: [
+            SidebarXItem(
+              icon: Icons.home,
+              label: 'one',
+              onTap: () {
+                debugPrint('Home');
+              },
+            ),
+            SidebarXItem(
+              icon: Icons.home,
+              label: 'two',
+              onTap: () {
+                debugPrint('Home');
+              },
+            ),
+          ],
+        ),
         const SidebarXItem(
           icon: Icons.search,
           label: 'Search',
@@ -155,6 +178,29 @@ class ExampleSidebarX extends StatelessWidget {
         const SidebarXItem(
           icon: Icons.people,
           label: 'People',
+        ),
+        SidebarXItem(
+          icon: Icons.home,
+          label: ' Test 2',
+          onTap: () {
+            debugPrint('Home');
+          },
+          children: [
+            SidebarXItem(
+              icon: Icons.home,
+              label: 'one two',
+              onTap: () {
+                debugPrint('Home');
+              },
+            ),
+            SidebarXItem(
+              icon: Icons.home,
+              label: 'two 2',
+              onTap: () {
+                debugPrint('Home');
+              },
+            ),
+          ],
         ),
         SidebarXItem(
           icon: Icons.favorite,

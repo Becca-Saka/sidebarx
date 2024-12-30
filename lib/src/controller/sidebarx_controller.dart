@@ -41,6 +41,21 @@ class SidebarXController extends ChangeNotifier {
     notifyListeners();
   }
 
+  int? _selectedPanelIndex;
+  int? get selectedPanelIndex => _selectedPanelIndex;
+  void setExpandedPanel(int panelIndex, int parentIndex) {
+    _selectedPanelIndex = panelIndex;
+    selectIndex(parentIndex);
+  }
+
+  bool panelExpaned = false;
+
+  void setCollapsedPanel(int parentIndex) {
+    panelExpaned = !panelExpaned;
+    selectIndex(parentIndex);
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _extendedController.close();

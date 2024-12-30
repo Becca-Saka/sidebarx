@@ -8,21 +8,24 @@ class SidebarXCell extends StatefulWidget {
     required this.extended,
     required this.selected,
     required this.theme,
-    required this.onTap,
+    this.onTap,
     required this.onLongPress,
     required this.onSecondaryTap,
     required this.animationController,
+    this.panelExpanded,
+    this.decoration,
   }) : super(key: key);
 
   final bool extended;
   final bool selected;
+  final bool? panelExpanded;
   final SidebarXItem item;
   final SidebarXTheme theme;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final VoidCallback onLongPress;
   final VoidCallback onSecondaryTap;
   final AnimationController animationController;
-
+  final Decoration Function(bool)? decoration;
   @override
   State<SidebarXCell> createState() => _SidebarXCellState();
 }
@@ -72,9 +75,10 @@ class _SidebarXCellState extends State<SidebarXCell> {
         onSecondaryTap: widget.onSecondaryTap,
         behavior: HitTestBehavior.opaque,
         child: Container(
-          decoration: decoration?.copyWith(
-            color: _hovered && !widget.selected ? theme.hoverColor : null,
-          ),
+          decoration: widget.decoration?.call(_hovered) ??
+              decoration?.copyWith(
+                color: _hovered && !widget.selected ? theme.hoverColor : null,
+              ),
           padding: padding ?? const EdgeInsets.all(8),
           margin: margin ?? const EdgeInsets.all(4),
           child: Row(
@@ -106,11 +110,27 @@ class _SidebarXCellState extends State<SidebarXCell> {
                   opacity: _animation,
                   child: Padding(
                     padding: textPadding ?? EdgeInsets.zero,
-                    child: Text(
-                      widget.item.label ?? '',
-                      style: textStyle,
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
+                    child: Row(
+                      // mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.item.label ?? '',
+                            style: textStyle,
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                          ),
+                        ),
+                        if (widget.panelExpanded != null) ...[
+                          _ExpansionIcon(
+                            item: widget.item,
+                            iconTheme: iconTheme,
+                            selected: widget.selected,
+                            expanded: widget.panelExpanded!,
+                          )
+                        ],
+                      ],
                     ),
                   ),
                 ),
@@ -147,6 +167,46 @@ class _Icon extends StatelessWidget {
       item.icon,
       color: iconTheme?.color,
       size: iconTheme?.size,
+    );
+  }
+}
+
+class _ExpansionIcon extends StatelessWidget {
+  const _ExpansionIcon({
+    Key? key,
+    required this.item,
+    required this.iconTheme,
+    required this.selected,
+    required this.expanded,
+  }) : super(key: key);
+  final bool selected;
+  final bool expanded;
+  final SidebarXItem item;
+  final IconThemeData? iconTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(
+        begin: expanded ? 0 : 3.14,
+        end: expanded ? 3.14 : 0,
+      ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      builder: (context, value, child) {
+        if (selected) {
+          return Transform.rotate(
+            angle: value,
+            child: child,
+          );
+        }
+        return child!;
+      },
+      child: Icon(
+        Icons.expand_more,
+        color: iconTheme?.color,
+        size: iconTheme?.size,
+      ),
     );
   }
 }
